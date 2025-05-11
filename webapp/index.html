@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="index.css" />
+    <title>Rental</title>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+<header>
+    <div class="total_title">
+        <img src="img/car.png" alt="Transparent Image">
+        <h1>Welcome to</h1>
+        <h2 class="moving-title">EVOL</h2>
+    </div>
+</header>
+
+<nav>
+    <div class="left">
+        <a href="Cars.html">Cars</a>
+        <a href="Motorbikes.html">Motorbikes</a>
+        <a href="Bikes.html">Bikes & Scooters</a>
+        <a href="Queries.html">Queries</a>
+        <a href="#">Contact Us</a>
+    </div>
+    <div id="right">
+        <input type="button" onclick="document.getElementById('SignInForm').style.display='block'" value="Sign In"/>
+
+        <div class="admin-section">
+            <div class="gear-icon">&#9881;</div>
+            <ul class="settings-list">
+                <li><a href="Damage.html">Add Damage</a></li>
+                <li><a href="CarMotorbike.html">Add Car/Motorbike</a></li>
+                <li><a href="ScooterBike.html">Add Scooter/Bike</a></li>
+                <li><a href="Accident.html">Add Accident</a></li>
+                <li><a href="Rental.html">Add Rental</a></li>
+            </ul>
+        </div>
+
+    </div>
+</nav>
+
+<div id="SignInForm" class="modal">
+    <form class="modal-content">
+        <div class="container">
+            <h1>Sing In</h1>
+            <hr>
+            <label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter Email" name="email" required>
+
+            <label for="psw"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw" id= "password" required>
+
+            <label>
+                <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+            </label>
+
+            <p>Not registered? <a href="#" onclick="document.getElementById('SignInForm').style.display='none'; document.getElementById('SignUpForm').style.display='block';" style="color: #04AA6D; font-size: 20px;">Create an account</a>.</p>
+
+            <div class="clearfix">
+                <button type="button" onclick="document.getElementById('SignInForm').style.display='none';" class="cancelbtn">Cancel</button>
+                <button type="submit" class="loginbtn">Sign In</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="SignUpForm" class="modal2">
+    <form class="modal2-content" action="/HY360_project_war_exploded/Customer" method="post">
+        <div class="container2">
+            <h1>Sign Up</h1>
+            <hr>
+            <label for="email"><b>Email</b></label>
+            <input type="text" placeholder="Enter Email" name="email" id="email" required>
+
+            <label for="psw2"><b>Password</b></label>
+            <input type="password" placeholder="Enter Password" name="psw2" id="psw2" required>
+
+            <label for="cnfrmpsw"><b>Confirm Password</b></label>
+            <input type="password" placeholder="Confirm Password" name="cnfrmpsw" required>
+
+            <label for="firstname"><b>First Name</b></label>
+            <input type="text" placeholder="Enter First Name" name="firstname" id="firstname" required>
+
+            <label for="lastname"><b>Last Name</b></label>
+            <input type="text" placeholder="Enter Last Name" name="lastname" id="lastname" required>
+
+            <label for="address"><b>Accommodation</b></label>
+            <input type="text" placeholder="address, city, country, zip code" name="address" id="address" required>
+
+            <label for="birthdate"><b>Birthdate</b></label>
+            <input type="date" name="birthdate" min="1920-01-01" max="2007-12-31" value="1980-01-01" id="birthdate" required>
+
+            <label for="phonenumber"><b>Phone Number</b></label>
+            <input type="text" placeholder="Enter Phone Number" name="phonenumber" id="phonenumber" required>
+
+            <label for="creditcardnum"><b>Credit Card Number</b></label>
+            <input type="text" placeholder="Enter Credit Card Number" name="creditcardnum" id="creditcardnum" required>
+
+            <label for="creditcardcvv"><b>Credit Card Verification Value</b></label>
+            <input type="text" placeholder="Enter Credit Card Verification Value" name="creditcardcvv" id="creditcardcvv" required>
+
+            <label for="driverlcns"><b>Do you own Driver License?</b></label>
+            <input type="checkbox" name="driverlcns" id="driverLicenseCheckbox" onchange="toggleExtraField()" >
+            <br></br>
+            <div id="extraField" class="hidden">
+                <br><label for="drlicnumber"><b>Driver License Number</b></label>
+                <input type="text" name="drlicnumber" placeholder="Enter Driver License Number" id="driverlcns">
+            </div>
+
+            <label>
+                <input type="checkbox" checked="checked" name="remember" style="margin-bottom:15px"> Remember me
+            </label>
+
+            <p>By creating an account you agree to our <a href="#" style="color:dodgerblue; font-size:20px;">Terms & Privacy</a>.</p>
+
+            <div class="clearfix">
+                <button type="button" onclick="window.location.href='index.html';" class="cancelbtn2">Cancel</button>
+                <input type="submit" id="submit" class="signupbtn2" value="Sign Up">
+            </div>
+            <h3>Already registered? <a href="#" onclick="document.getElementById('SignInForm').style.display='block'; document.getElementById('SignUpForm').style.display='none';"style="color: #04AA6D; font-size:20px;">Sign In</a>.</h3>
+        </div>
+    </form>
+</div>
+
+<script>
+    // Get the modal
+    var modal = document.getElementById('SignInForm');
+    var modal2 = document.getElementById('SignUpForm');
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function(event) {
+        if (event.target == modal2) {
+            modal2.style.display = "none";
+        }
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+    function toggleExtraField() {
+        var extraField = document.getElementById('extraField');
+        var checkbox = document.getElementById('driverLicenseCheckbox');
+
+        if (checkbox.checked) {
+            extraField.classList.remove('hidden');
+        } else {
+            extraField.classList.add('hidden');
+        }
+    }
+</script>
+
+</body>
+</html>

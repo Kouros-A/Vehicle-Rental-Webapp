@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="index.css" />
+  <title>Scooters and Bikes Information</title>
+</head>
+<header>
+  <div class="total_title">
+    <img src="img/car.png" alt="Transparent Image">
+    <h1>Welcome to</h1>
+    <h2 class="moving-title">EVOL</h2>
+  </div>
+</header>
+
+<nav>
+  <div class="left">
+    <a href="Cars.html">Cars</a>
+    <a href="Motorbikes.html">Motorbikes</a>
+    <a href="Bikes.html">Bikes & Scooters</a>
+    <a href="Queries.html">Queries</a>
+    <a href="#">Contact Us</a>
+  </div>
+  <div id="right">
+    <input type="button" onclick="document.getElementById('SignInForm').style.display='block'" value="Sign In"/>
+
+    <div class="admin-section">
+      <div class="gear-icon">&#9881;</div>
+      <ul class="settings-list">
+        <li><a href="Damage.html">Add Damage</a></li>
+        <li><a href="CarMotorbike.html">Add Car/Motorbike</a></li>
+        <li><a href="ScooterBike.html">Add Scooter/Bike</a></li>
+        <li><a href="Accident.html">Add Accident</a></li>
+        <li><a href="Rental.html">Add Rental</a></li>
+
+      </ul>
+    </div>
+
+  </div>
+</nav>
+<body>
+<h2>Scooters and Bikes Information</h2>
+<table border="1">
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Brand</th>
+    <th>Model</th>
+    <th>Color</th>
+    <th>Autonomy</th>
+    <th>Rental Cost</th>
+    <th>Insurance Cost</th>
+    <th>Unique Number</th>
+  </tr>
+  </thead>
+  <tbody id="data"></tbody>
+</table>
+
+<script>
+  // Fetch data from the servlet and populate the table
+  fetch('ScooterBike')
+          .then(response => response.json())
+          .then(data => {
+            const tableBody = document.getElementById('data');
+            data.forEach(item => {
+              const row = document.createElement('tr');
+              Object.values(item).forEach(value => {
+                const cell = document.createElement('td');
+                cell.textContent = value;
+                row.appendChild(cell);
+              });
+              tableBody.appendChild(row);
+            });
+          })
+          .catch(error => console.error('Error fetching data:', error));
+</script>
+</body>
+</html>

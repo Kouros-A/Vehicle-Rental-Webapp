@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="index.css" />
+  <title>Queries</title>
+
+</head>
+<header>
+  <div class="total_title">
+    <h1>Welcome to</h1>
+    <h2 class="moving-title">EVOL</h2>
+  </div>
+</header>
+
+<nav>
+  <div class="left">
+    <a href="Cars.html">Cars</a>
+    <a href="Motorbikes.html">Motorbikes</a>
+    <a href="Bikes.html">Bikes & Scooters</a>
+    <a href="Queries.html">Queries</a>
+    <a href="#">Contact Us</a>
+  </div>
+  <div id="right">
+    <input type="button" onclick="document.getElementById('SignInForm').style.display='block'" value="Sign In"/>
+
+    <div class="admin-section">
+      <div class="gear-icon">&#9881;</div>
+      <ul class="settings-list">
+        <li><a href="Damage.html">Add Damage</a></li>
+        <li><a href="CarMotorbike.html">Add Car/Motorbike</a></li>
+        <li><a href="ScooterBike.html">Add Scooter/Bike</a></li>
+        <li><a href="Accident.html">Add Accident</a></li>
+      </ul>
+    </div>
+
+  </div>
+</nav>
+<body>
+<h2>Execute SQL Query</h2>
+<label for="sqlQuery">Enter SQL Query:</label>
+<textarea id="sqlQuery" rows="5" cols="50"></textarea>
+<button onclick="executeQuery()">Execute Query</button>
+<h3>Default Queries:</h3>
+<button onclick="executeDefaultQuery('SELECT \'CarMotorbike\' AS Category, CarMotorbikeId AS VehicleId, \n'+
+'IF(CarMotorbikeId IN (SELECT CarMotorbikeId FROM CustomerVehicleRental WHERE CarMotorbikeId IS NOT NULL), \'Rented\', \'Available\') AS Status\n'+
+'FROM CarsMotorbikes\n'+
+'UNION\n'+
+'-- For ScootersBikes\n'+
+'SELECT \'ScooterBike\' AS Category, ScooterBikeId AS VehicleId, \n'+
+'IF(ScooterBikeId IN (SELECT ScooterBikeId FROM CustomerVehicleRental WHERE ScooterBikeId IS NOT NULL), \'Rented\', \'Available\') AS Status\n'+
+'FROM ScootersBikes;')">List of available or rented vehicles</button>
+<button onclick="executeTimePeriodQuery('SELECT RentalId, StartDate, EndDate\n'+
+'FROM Rental\n'+
+'WHERE StartDate >= \'YYYY-MM-DD\' AND EndDate <= \'YYYY-MM-DD\';')">List Of Rentals by time period( Replace YYYY-MM-DD with desired dates in the query field )</button>
+<button onclick="executeDefaultQuery('SELECT \'CarMotorbike\' AS Category, MAX(Duration) AS MaxDuration, MIN(Duration) AS MinDuration, AVG(Duration) AS AvgDuration\n'+
+'FROM Rental\n'+
+'JOIN CustomerVehicleRental ON Rental.RentalId = CustomerVehicleRental.RentalId\n'+
+'WHERE CarMotorbikeId IS NOT NULL\n'+
+'UNION\n'+
+'SELECT \'ScooterBike\' AS Category, MAX(Duration), MIN(Duration), AVG(Duration)\n'+
+'FROM Rental\n'+
+'JOIN CustomerVehicleRental ON Rental.RentalId = CustomerVehicleRental.RentalId\n'+
+'WHERE ScooterBikeId IS NOT NULL;')">Maximum, minimum and average rental duration by vehicle category
+</button>
+<button onclick="executeTimePeriodQuery('SELECT \'CarMotorbike\' AS Category, SUM(PaymentAmount) AS TotalIncome\n'+
+'FROM Rental\n'+
+'JOIN CustomerVehicleRental ON Rental.RentalId = CustomerVehicleRental.RentalId\n'+
+'WHERE CarMotorbikeId IS NOT NULL AND StartDate >= \'YYYY-MM-DD\' AND EndDate <= \'YYYY-MM-DD\'\n'+
+'UNION\n'+
+'SELECT \'ScooterBike\' AS Category, SUM(PaymentAmount)\n'+
+'FROM Rental\n'+
+'JOIN CustomerVehicleRental ON Rental.RentalId = CustomerVehicleRental.RentalId\n'+
+'WHERE ScooterBikeId IS NOT NULL AND StartDate >= \'YYYY-MM-DD\' AND EndDate <= \'YYYY-MM-DD\';')">Rental income by period of time and by category of vehicle( Replace YYYY-MM-DD with desired dates in the query field )</button>
+<button onclick="executeTimePeriodQuery('SELECT SUM(Cost) AS TotalCost\n'+
+'FROM (\n'+
+'    SELECT Cost, MaintenanceDate, MaintenanceType\n'+
+'    FROM Maintenance\n'+
+'    WHERE MaintenanceType = \'Maintenance\' AND MaintenanceDate BETWEEN \'YYYY-MM-DD\' AND \'YYYY-MM-DD\'\n'+
+'    UNION ALL\n'+
+'    SELECT Cost, DATE_ADD(MaintenanceDate, INTERVAL 1 DAY) AS RepairDate, MaintenanceType\n'+
+'    FROM Maintenance\n'+
+'    WHERE MaintenanceType = \'Repair\' AND DATE_ADD(MaintenanceDate, INTERVAL 1 DAY) BETWEEN \'YYYY-MM-DD\' AND \'YYYY-MM-DD\'\n'+
+'    UNION ALL\n'+
+'    SELECT Cost, DATE_ADD(MaintenanceDate, INTERVAL 3 DAY) AS RepairDate, MaintenanceType\n'+
+'    FROM Maintenance\n'+
+'    WHERE MaintenanceType = \'Repair\' AND DATE_ADD(MaintenanceDate, INTERVAL 3 DAY) BETWEEN \'YYYY-MM-DD\' AND \'YYYY-MM-DD\'\n'+
+') AS CombinedCosts;')">Total vehicle maintenance and repair costs per period of time( Replace YYYY-MM-DD with desired dates in the query field ) </button>
+<button onclick="executeDefaultQuery('-- For CarsMotorbikes\n'+
+'(SELECT \'CarMotorbike\' AS Category, CarMotorbikeId, COUNT(*) AS RentalCount\n'+
+'FROM CustomerVehicleRental\n'+
+'WHERE CarMotorbikeId IS NOT NULL\n'+
+'GROUP BY CarMotorbikeId\n'+
+'ORDER BY RentalCount DESC\n'+
+'LIMIT 1)\n'+
+'UNION\n'+
+'-- For ScootersBikes\n'+
+'(SELECT \'ScooterBike\' AS Category, ScooterBikeId, COUNT(*) AS RentalCount\n'+
+'FROM CustomerVehicleRental\n'+
+'WHERE ScooterBikeId IS NOT NULL\n'+
+'GROUP BY ScooterBikeId\n'+
+'ORDER BY RentalCount DESC\n'+
+'LIMIT 1);')">Most popular vehicle per category </button>
+<h3>Query Result:</h3>
+<div id="queryResult"></div>
+<script>
+  function executeQuery() {
+    const sqlQuery = document.getElementById('sqlQuery').value;
+    fetch('Queries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: 'query=' + encodeURIComponent(sqlQuery),
+    })
+            .then(response => response.text())  // Change here to handle the response as text
+            .then(data => {
+              const queryResult = document.getElementById('queryResult');
+              queryResult.innerHTML = formatResult(data);  // Update here to set the innerHTML directly
+            })
+            .catch(error => console.error('Error executing query:', error));
+  }
+  function executeDefaultQuery(query) {
+    document.getElementById('sqlQuery').value = query;
+    executeQuery();
+  }
+  function executeTimePeriodQuery(query) {
+    document.getElementById('sqlQuery').value = query;
+  }
+
+  function formatResult(result) {
+    const rows = result.trim().split('\n');
+    if (rows.length === 0) {
+      return '<p>No results found.</p>';
+    }
+
+    const header = rows[0].split(' ').map(cell => `<th>${cell}</th>`).join('');
+    const body = rows.slice(1).map(row => `<tr>${row.split(' ').map(cell => `<td>${cell}</td>`).join('')}</tr>`).join('');
+
+    return `<table><thead><tr>${header}</tr></thead><tbody>${body}</tbody></table>`;
+  }
+
+</script>
+</body>
+</html>
